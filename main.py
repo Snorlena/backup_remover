@@ -27,8 +27,8 @@ if __name__ == "__main__":
     config = configparser.ConfigParser()
     config.read("config.ini")
 
-    for i in config.sections():
-        data = dict(config.items(i))
+    for section in config.sections():
+        data = dict(config.items(section))
         filepath = data["path"]
         last_modified = data["last_modified"]
         min_size = data["size"]
