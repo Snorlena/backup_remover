@@ -5,7 +5,7 @@ import json
 from datetime import datetime, timedelta
 
 
-def remove_backups(path, days_since_mod, minimum_size, file_ending):
+def remove_backups(path, days_since_mod, minimum_size, file_extension):
     """Remove old backups from path"""
     treshold = datetime.now() - (timedelta(days=days_since_mod))
     entries = os.listdir(path)
@@ -15,9 +15,9 @@ def remove_backups(path, days_since_mod, minimum_size, file_ending):
         mod_time = datetime.fromtimestamp(os.stat(os.path.join(path, file)).st_mtime)
         # Get filesize of file
         file_size = os.stat(os.path.join(path, file)).st_size
-        for ending in file_ending:
-            # Check if file has ending to be removed.
-            if os.path.join(path, file).endswith(ending):
+        for extension in file_extension:
+            # Check if file has extension to be removed.
+            if os.path.join(path, file).endswith(extension):
                 if mod_time < treshold and file_size > minimum_size:
                     os.remove(os.path.join(path, file))
                     print(file, "has been removed")
@@ -32,5 +32,5 @@ if __name__ == "__main__":
         filepath = data["path"]
         last_modified = data["last_modified"]
         min_size = data["size"]
-        file_end = json.loads(data["file_ending"])
-        remove_backups(filepath, int(last_modified), int(min_size), file_end)
+        file_ext = json.loads(data["file_extensions"])
+        remove_backups(filepath, int(last_modified), int(min_size), file_ext)
