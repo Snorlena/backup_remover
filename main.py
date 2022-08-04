@@ -2,13 +2,19 @@
 import os
 import configparser
 import json
+import sys
 from datetime import datetime, timedelta
 
 
 def remove_backups(path, days_since_mod, minimum_size, file_extension):
     """Remove old backups from path"""
     treshold = datetime.now() - (timedelta(days=days_since_mod))
-    entries = os.listdir(path)
+
+    try:
+        entries = os.listdir(path)
+    except:
+        print("The path:", path, "was not found")
+        sys.exit(1)
 
     for file in entries:
         # Get modification time from file
@@ -28,9 +34,22 @@ if __name__ == "__main__":
     config.read("config.ini")
 
     for section in config.sections():
-        data = dict(config.items(section))
-        filepath = data["path"]
-        last_modified = data["last_modified"]
-        min_size = data["size"]
-        file_ext = json.loads(data["file_extensions"])
+        try:
+            data = dict(config.items(section))
+        except:
+            print("No sections in config")
+            sys.exit(1)
+
+        try:
+            filepath = data["path"]
+            last_modified = data["last_modified"]
+            min_size = data["size"]
+            file_ext = json.loads(data["file_extensions"])
+        except:
+            items_needed = ["path", "last_modified", "size", "file_extensions"]
+            for item in items_needed:
+                if item not in data:
+                    print(item, "was not found in the", section, "section.")
+                    sys.exit(1)
+
         remove_backups(filepath, int(last_modified), int(min_size), file_ext)
