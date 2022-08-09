@@ -13,7 +13,7 @@ def remove_backups(path, days_since_mod, minimum_size, file_extension):
     try:
         entries = os.listdir(path)
     except FileNotFoundError:
-        print("The path:", path, "was not found")
+        print("The path:", path, "could not be found")
         sys.exit(1)
 
     for file in entries:
@@ -37,7 +37,7 @@ if __name__ == "__main__":
         try:
             data = dict(config.items(section))
         except KeyError:
-            print("No sections in config")
+            print("No sections in the config file")
             sys.exit(1)
 
         try:
@@ -45,11 +45,8 @@ if __name__ == "__main__":
             last_modified = data["last_modified"]
             min_size = data["size"]
             file_ext = json.loads(data["file_extensions"])
-        except KeyError:
-            items_needed = ["path", "last_modified", "size", "file_extensions"]
-            for item in items_needed:
-                if item not in data:
-                    print(item, "was not found in the", section, "section.")
-                    sys.exit(1)
+        except KeyError as key:
+            print(key, "could not be found in the", section, "section of the config.")
+            sys.exit(1)
 
         remove_backups(filepath, int(last_modified), int(min_size), file_ext)
