@@ -1,7 +1,6 @@
 """Script to remove old backups"""
 import os
 import configparser
-import json
 import sys
 from datetime import datetime, timedelta
 
@@ -44,7 +43,7 @@ if __name__ == "__main__":
             filepath = data["path"]
             last_modified = data["last_modified"]
             min_size = data["size"]
-            file_ext = json.loads(data["file_extensions"])
+            file_ext = data["file_extensions"].replace(" ","").split(",")
         except KeyError as key:
             print(key, "could not be found in the", section, "section of the config.")
             sys.exit(1)
